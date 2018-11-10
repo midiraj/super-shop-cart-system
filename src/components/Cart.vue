@@ -13,25 +13,34 @@
 	    <span class="item-name">Total</span>
 	    <span class="item-name float-right">${{totalPrice}}</span>
 	  </li>
+	  <li class="list-group-item">
+	    <button @click="checkout" class="btn btn-block btn-success" v-if="items.length > 0">Checkout</button>
+	  </li>
 	</ul>
 </template>
 
 <script>
 	export default{
-		props:['items'],
-
 		computed: {
+			items(){
+				return this.$store.getters.getCart
+			},
 			totalPrice(){
 				var total = 0
 				this.items.forEach(item => {
 					total += parseFloat(item.price)
 				})
-				return total;
+				return total.toFixed(2);
 			}
 		},
 		methods:{
 			removeItem(index){
-				this.$emit('itemRemoved',index)
+				this.$store.commit('removeItem',index)
+			},
+			checkout(){
+				if(confirm('Are You Sure You want to checkout ?')){
+					this.$store.commit('clearCart')
+				}
 			}
 		}
 
